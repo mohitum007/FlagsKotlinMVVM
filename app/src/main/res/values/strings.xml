@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FlagsKotlinMVVM</string>
+
+    <string name="selected_image_description">Selected flag from the list</string>
+    <string name="loading_data_message">Loading data, please wait…</string>
+    <string name="ok">OK</string>
+</resources>
