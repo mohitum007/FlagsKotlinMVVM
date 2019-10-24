@@ -1,54 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/default_padding"
-    tools:context=".view.MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:id="@+id/contentLayout"
+    <data>
+        <variable
+            name="mainViewModel"
+            type="com.mohitum.flagskotlinmvvm.viewmodel.MainViewModel" />
+
+        <variable
+            name="flagsListRvAdapter"
+            type="com.mohitum.flagskotlinmvvm.adapter.FlagsAdapter" />
+
+        <import type="android.view.View"/>
+    </data>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:padding="@dimen/default_padding"
+        tools:context=".view.MainActivity">
 
-        <ImageView
-            android:id="@+id/selectedImgVw"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/contentLayout"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight=".6"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/selected_image_description"
-            android:scaleType="centerCrop" />
+            android:visibility="@{mainViewModel.isLoading ? View.GONE : View.VISIBLE}"
+            android:orientation="horizontal">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/flagsListRv"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_weight=".4" />
+            <ImageView
+                android:id="@+id/selectedImgVw"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".6"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/selected_image_description"
+                android:scaleType="centerCrop" />
 
-    </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/flagsListRv"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight=".4"
+                app:adapter="@{flagsListRvAdapter}" />
 
-    <LinearLayout
-        android:id="@+id/progressLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical">
+        </LinearLayout>
 
-        <ProgressBar
+        <LinearLayout
+            android:id="@+id/progressLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_centerInParent="true"
+            android:visibility="@{mainViewModel.isLoading ? View.VISIBLE : View.GONE}"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/loadingMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/default_margin"
-            android:text="@string/loading_data_message" />
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
 
-    </LinearLayout>
-</RelativeLayout>
+            <TextView
+                android:id="@+id/loadingMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/default_margin"
+                android:text="@string/loading_data_message" />
+        </LinearLayout>
+    </RelativeLayout>
+</layout>
