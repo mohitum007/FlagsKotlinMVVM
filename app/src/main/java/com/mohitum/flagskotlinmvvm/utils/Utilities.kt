@@ -8,6 +8,13 @@ import android.content.Context
 import com.mohitum.flagskotlinmvvm.R
 import android.net.NetworkInfo
 import android.net.ConnectivityManager
+import android.webkit.URLUtil
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.mohitum.flagskotlinmvvm.adapter.FlagsAdapter
+import kotlinx.android.synthetic.main.item_flag.view.*
 
 /**
  * Top level method to check if the device is a tablet or not
@@ -54,4 +61,18 @@ fun showErrorWithFinishAction(activity: Activity, title: String, message: String
         activity.finish()
     }
     builder.create().show()
+}
+
+
+@BindingAdapter("app:adapter")
+fun bindRvAdapter(rcView: RecyclerView, adapter: FlagsAdapter?) {
+    adapter?.let { rcView.adapter = it }
+}
+
+@BindingAdapter("app:srcUrl")
+fun bindImage(imgView: ImageView, url: String?) {
+    if (URLUtil.isValidUrl(url)) {
+        Glide.with(imgView.context).load(url).placeholder(R.drawable.ic_launcher_background)
+            .into(imgView)
+    }
 }

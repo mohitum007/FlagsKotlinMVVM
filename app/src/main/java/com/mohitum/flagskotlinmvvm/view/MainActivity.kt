@@ -2,8 +2,6 @@ package com.mohitum.flagskotlinmvvm.view
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.webkit.URLUtil
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
@@ -15,23 +13,31 @@ import com.mohitum.flagskotlinmvvm.models.Flag
 import com.mohitum.flagskotlinmvvm.utils.*
 import com.mohitum.flagskotlinmvvm.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import androidx.databinding.DataBindingUtil
+import com.mohitum.flagskotlinmvvm.databinding.ActivityMainBinding
+import kotlinx.coroutines.*
 
 /**
  * Main Activity class to load flags
  */
-class MainActivity : AppCompatActivity(), FlagsAdapter.ClickListener,
-    GetFlagsTask.JsonTaskListener {
+class MainActivity : AppCompatActivity(), FlagsAdapter.ClickListener {
 
     /**
      * MainViewModel instance reference
      */
     private lateinit var viewModel: MainViewModel
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        //setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+
+        binding.mainViewModel = viewModel
+
         initUI()
     }
 
@@ -43,7 +49,21 @@ class MainActivity : AppCompatActivity(), FlagsAdapter.ClickListener,
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         flagsListRv.layoutManager = LinearLayoutManager(this)
-        viewModel.getFlagsData(this, this)
+        viewModel.isLoading.set(true)
+
+        GlobalScope.launch {
+            with(viewModel.getFlagsData(this@MainActivity)) {
+                flags?.let {
+                    binding.flagsListRvAdapter = FlagsAdapter(
+                        context = this@MainActivity,
+                        flags = flags,
+                        defaultClickIndex = viewModel.selectedIndex,
+                        clickListener = this@MainActivity
+                    )
+                    viewModel.isLoading.set(false)
+                } ?: showErrorWithFinishAction(this@MainActivity, DIALOG_TITLE_ERROR, message)
+            }
+        }
     }
 
     override fun onClick(index: Int, flag: Flag) {
@@ -55,26 +75,4 @@ class MainActivity : AppCompatActivity(), FlagsAdapter.ClickListener,
         viewModel.selectedIndex = index
     }
 
-    override fun onTaskStarted(url: String) {
-        contentLayout.visibility = GONE
-        progressLayout.visibility = VISIBLE
-    }
-
-    override fun onTaskCompleted(flags: List<Flag>?) {
-        flags?.let {
-            flagsListRv.adapter = FlagsAdapter(
-                context = this,
-                flags = flags,
-                defaultclickIndex = viewModel.selectedIndex,
-                clickListener = this
-            )
-            contentLayout.visibility = VISIBLE
-            progressLayout.visibility = GONE
-            viewModel.flagsList = flags
-        } ?: onTaskError(NO_DATA_ERROR)
-    }
-
-    override fun onTaskError(errorString: String) {
-        showErrorWithFinishAction(this, DIALOG_TITLE_ERROR, errorString)
-    }
 }

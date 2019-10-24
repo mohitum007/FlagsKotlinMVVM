@@ -1,25 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/default_padding">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/flagImgVw"
-        android:layout_width="@dimen/flag_item_width"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/selected_image_description"
-        android:scaleType="centerCrop"
-        tools:src="@drawable/ic_launcher_background" />
+    <data>
+        <variable
+            name="flag"
+            type="com.mohitum.flagskotlinmvvm.models.Flag" />
+    </data>
 
-    <TextView
-        android:id="@+id/flagsTitleTxtVw"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="@dimen/default_margin"
-        android:layout_toEndOf="@+id/flagImgVw" />
+        android:padding="@dimen/default_padding">
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/flagImgVw"
+            android:layout_width="@dimen/flag_item_width"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/selected_image_description"
+            android:scaleType="centerCrop"
+            app:srcUrl="@{flag.url}"
+            tools:src="@drawable/ic_launcher_background" />
+
+        <TextView
+            android:id="@+id/flagsTitleTxtVw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_toEndOf="@+id/flagImgVw"
+            android:text="@{flag.title}"/>
+
+    </RelativeLayout>
+</layout>
